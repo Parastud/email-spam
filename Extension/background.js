@@ -1,3 +1,5 @@
-chrome.runtime.onInstalled.addListener(() => {
-  console.log("✅ Gmail Spam Checker installed.");
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+    if (msg.action === "scan") {
+        sendResponse({ received: true });
+    }
 });
