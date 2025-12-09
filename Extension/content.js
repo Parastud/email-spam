@@ -2,7 +2,6 @@ console.log("SpamShield content script loaded!");
 
 const API_URL = "http://localhost:8000/predict";
 
-// Insert "Check Spam" button
 function insertCheckSpamButton() {
     const subjectElem = document.querySelector("h2.hP");
 
@@ -34,7 +33,6 @@ function insertCheckSpamButton() {
     btn.addEventListener("click", checkSpam);
 }
 
-// Handle spam scanning
 async function checkSpam() {
     const subject = document.querySelector("h2.hP")?.innerText || "";
     const bodyElem = document.querySelector(".a3s.aiL");
@@ -80,7 +78,6 @@ async function checkSpam() {
         const confidence = data.confidence;
         const spamProb = confidence ? (confidence[1] * 100).toFixed(2) : null;
 
-        // UI CARDS WITH CONFIDENCE INCLUDED
         if (isSpam) {
             resultDiv.innerHTML = `
                 <div class="spamCard spam">
@@ -124,7 +121,6 @@ async function checkSpam() {
     }
 }
 
-// Observer adds button whenever Gmail loads a new email
 const observer = new MutationObserver(() => {
     insertCheckSpamButton();
 });

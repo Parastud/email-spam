@@ -54,8 +54,6 @@ except Exception as e:
 scaler = None
 sender_domain_cols = None
 class EmailIn(BaseModel):
-    subject: str = ""
-    body: str = ""
     text: str = None
 
 class PredictionOut(BaseModel):
@@ -80,9 +78,9 @@ def transform_email_text(text: str) -> str:
     text = re.sub(r"<[^>]+>", " htmltag ", text)
     text = re.sub(r"\d+", " numtoken ", text)
     text = re.sub(r"\s+", " ", text).strip()
-    tokens = re.findall(r"\b\w+\b", text)
+    tokens = re.findall(r"\b\w+\b", text)   #Tokenization | | 
 
-    filtered = [PS.stem(t) for t in tokens if t not in STOPWORDS]
+    filtered = [PS.stem(t) for t in tokens if t not in STOPWORDS] #Stopword removal + Stemming
 
     return " ".join(filtered)
 
@@ -98,8 +96,7 @@ def predict_from_text(combined_text: str):
     pred = model.predict(X)[0]
     proba = None
     try:
-        if hasattr(model, "predict_proba"):
-            proba = model.predict_proba(X)[0].tolist()
+        proba = model.predict_proba(X)[0].tolist()
     except Exception as ex:
         logger.warning("Could not compute probabilities: %s", ex)
         proba = None
@@ -113,10 +110,7 @@ def root():
 @app.post("/predict", response_model=PredictionOut)
 def predict(email_in: EmailIn):
     try:
-        if email_in.text:
-            combined = email_in.text
-        else:
-            combined = (email_in.subject or "") + "\n\n" + (email_in.body or "")
+        combined = email_in.text
 
         if not combined.strip():
             raise HTTPException(status_code=400, detail="Empty input text.")
